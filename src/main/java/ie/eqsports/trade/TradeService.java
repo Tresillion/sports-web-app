@@ -48,8 +48,9 @@ public class TradeService {
 	public void buyNow(Bid bid) {
 
 		
-		//set the bid as accepted
+		//set the bid as accepted and date
 		bid.setStatus(2);
+		bid.setDateTimeMade(new Date());
 
 		
 		//get the offer and add this bid to list
@@ -66,7 +67,7 @@ public class TradeService {
 		// create the transaction to credit the money from buyer's acccount
 		Transaction transaction = new Transaction();
 		
-		BigDecimal tradeTotalPrice = bid.getAmmountPerShare()
+		BigDecimal tradeTotalPrice = bid.getAmountPerShare()
 				.multiply(new BigDecimal(offer.getQuantity()));
 
 		
@@ -80,11 +81,11 @@ public class TradeService {
 		Transaction sellTransaction = new Transaction();
 		
 	
-		transaction.setAccountId(holding.getAccountId());
-		transaction.setAmount( tradeTotalPrice );
-		transaction.setStatus(2);
-		transaction.setTransactionTypeId(3);
-		transaction.setDateCreated(new Date());		
+		sellTransaction.setAccountId(holding.getAccountId());
+		sellTransaction.setAmount( tradeTotalPrice );
+		sellTransaction.setStatus(2);
+		sellTransaction.setTransactionTypeId(3);
+		sellTransaction.setDateCreated(new Date());		
 		
 		//Save offer and transactions
 		offerRepository.save(offer);

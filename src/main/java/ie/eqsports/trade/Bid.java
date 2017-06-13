@@ -31,19 +31,19 @@ public class Bid {
 	private Date dateTimeMade;
 	
 	@Column(name = "BID_AMOUNT_PER_SHARE", precision=10, scale=2)
-	private BigDecimal ammountPerShare;
+	private BigDecimal amountPerShare;
 	
 	@Column(name = "BID_STATUS")
 	private int status;
 	
-	@Column(name = "OFFER_OFR_ID", updatable=false, insertable=false)
+	@Column(name = "OFFER_OFR_ID")
 	private long offerId;
 	
-	
+	/*
 	@ManyToOne(optional = false)
 	@JoinColumn(name="OFFER_OFR_ID")
 	private Offer offer;
-	
+	*/
 
 	public long getId() {
 		return id;
@@ -69,12 +69,12 @@ public class Bid {
 		this.dateTimeMade = dateTimeMade;
 	}
 
-	public BigDecimal getAmmountPerShare() {
-		return ammountPerShare;
+	public BigDecimal getAmountPerShare() {
+		return amountPerShare;
 	}
 
-	public void setAmmountPerShare(BigDecimal ammountPerShare) {
-		this.ammountPerShare = ammountPerShare;
+	public void setAmountPerShare(BigDecimal amountPerShare) {
+		this.amountPerShare = amountPerShare;
 	}
 
 	public int getStatus() {
@@ -84,7 +84,7 @@ public class Bid {
 	public void setStatus(int status) {
 		this.status = status;
 	}
-
+/*
 	public Offer getOffer() {
 		return offer;
 	}
@@ -92,7 +92,7 @@ public class Bid {
 	public void setOffer(Offer offer) {
 		this.offer = offer;
 	}
-
+*/
 
 	public long getOfferId() {
 		return offerId;
