@@ -1,5 +1,6 @@
 package ie.eqsports.shareholding;
 
+import java.math.BigDecimal;
 import java.util.Date;
 
 import javax.persistence.Column;
@@ -22,6 +23,9 @@ public class Share {
 	
 	@Column(name = "SHARE_NAME")
 	String name;
+	
+	@Column(name = "SHR_PRICE", precision=8, scale=2)
+	private BigDecimal sharePrice;
 	
 	@Column(name = "SHR_ISSUED_DATE")
 	@Temporal(TemporalType.DATE)
@@ -54,6 +58,14 @@ public class Share {
 
 	public void setDateIssued(Date dateIssued) {
 		this.dateIssued = dateIssued;
+	}
+
+	public BigDecimal getSharePrice() {
+		return sharePrice;
+	}
+
+	public void setSharePrice(BigDecimal sharePrice) {
+		this.sharePrice = sharePrice;
 	}
 	
 

@@ -35,10 +35,12 @@ public class Bid {
 	
 	@Column(name = "BID_STATUS")
 	private int status;
+	//status 1 = open and 2 = closed
 	
 	@Column(name = "OFFER_OFR_ID")
 	private long offerId;
 	
+
 	/*
 	@ManyToOne(optional = false)
 	@JoinColumn(name="OFFER_OFR_ID")

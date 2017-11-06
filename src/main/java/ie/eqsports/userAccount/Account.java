@@ -1,5 +1,6 @@
 package ie.eqsports.userAccount;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Set;
 
@@ -16,6 +17,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.persistence.Transient;
+
+import com.fasterxml.jackson.annotation.JsonInclude;
+
 import ie.eqsports.shareholding.*;
 
 @Entity
@@ -51,7 +56,9 @@ public class Account {
 	@OneToMany(fetch = FetchType.EAGER, mappedBy = "accountId" )
 	private Set<Shareholding> shareholdings;
 	
-	
+	@JsonInclude(JsonInclude.Include.NON_NULL)
+	@Transient
+	private BigDecimal balance;
 
 	public Set<Shareholding> getShareholdings() {
 		return this.shareholdings;
@@ -128,6 +135,18 @@ public class Account {
 
 		return accountName;
 
+	}
+
+
+
+	public BigDecimal getBalance() {
+		return balance;
+	}
+
+
+
+	public void setBalance(BigDecimal balance) {
+		this.balance = balance;
 	}
 
 

@@ -26,17 +26,6 @@ import ie.eqsports.shareholding.Shareholding;
 @Table(name = "OFFER", schema="SPORTSEQ" )
 public class Offer {
 	
-	//  `OFR_ID` INT NOT NULL AUTO_INCREMENT,
-	  //`OFR_QUANTITY` INT NOT NULL,
-	  //`OFR_MIN_PRICE` DECIMAL(10,2) NOT NULL,
-	  //`OFR_BUY_NOW_PRICE` DECIMAL(10,2) NOT NULL,
-	  //`OFR_STATUS` INT NOT NULL,
-	  //`OFR_DATE_OFFERED` VARCHAR(45) NOT NULL,
-	  //`OFR_CLOSE_DATETIME` DATETIME NOT NULL,
-	  //`OFR_DATE_CREATED` DATETIME NOT NULL,
-	  //`OFR_DATE_UPDATED` DATETIME NOT NULL,
-	  //`SHAREHOLDING_SHD_ID` INT NOT NULL,//
-	
 	@Id
 	@GeneratedValue(strategy = GenerationType.AUTO)
 	@Column(name = "OFR_ID")	
