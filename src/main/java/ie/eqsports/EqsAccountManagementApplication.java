@@ -6,11 +6,13 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.scheduling.annotation.EnableScheduling;
 
 import ie.eqsports.userAccount.Account;
 import ie.eqsports.userAccount.AccountRepository;
 
 @SpringBootApplication
+@EnableScheduling
 public class EqsAccountManagementApplication {
 
 	@Autowired

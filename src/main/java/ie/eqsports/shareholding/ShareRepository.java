@@ -13,5 +13,6 @@ public interface ShareRepository extends CrudRepository<Share, Long>,
 	
 	//@Query(value="select * from SPORTSEQ.SHARE where SHARE_NAME like %:playerName%;")	
 	Iterable<Share> findByNameContainingIgnoreCase(String name);
-
+	
+	
 }

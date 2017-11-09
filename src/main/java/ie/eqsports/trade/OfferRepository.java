@@ -20,7 +20,7 @@ public interface OfferRepository extends CrudRepository<Offer, Long> {
 	List<Offer> getAllOffersForAShare(@Param("shareId") long shareId);
 			
 	
-	@Query(value="select off.* from SPORTSEQ.OFFER where off.OFR_STATUS = 1 and off.OFR_CLOSE_DATETIME < now();",
+	@Query(value="select off.* from SPORTSEQ.OFFER off where off.OFR_STATUS = 1 and off.OFR_CLOSE_DATETIME < now();",
 	nativeQuery=true)	
 	List<Offer> getActiveExpiredOffers();
 	

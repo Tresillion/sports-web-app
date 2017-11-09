@@ -1,17 +1,21 @@
 package ie.eqsports.trade;
 
 import java.math.BigDecimal;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import ie.eqsports.shareholding.Shareholding;
 import ie.eqsports.shareholding.ShareholdingRepository;
+import ie.eqsports.tasks.OfferTasks;
 import ie.eqsports.transaction.Transaction;
 import ie.eqsports.transaction.TransactionRepository;
 import ie.eqsports.userAccount.AccountService;
@@ -34,6 +38,11 @@ public class TradeService {
 
 	@Autowired
 	private AccountService accountService;
+	
+	private static final Logger log = LoggerFactory.getLogger(OfferTasks.class);	
+	
+	private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
 
 	public void offerShares(Offer offer) {
 
@@ -42,16 +51,19 @@ public class TradeService {
 	}
 	
 	
-	public void processExpiredOffer()  {
+	public void processExpiredOffers()  {
 		
 		//get a list of active offers that have passed the expiry date
 		List<Offer> offers = offerRepository.getActiveExpiredOffers();
+		log.debug(offers.size() + " offers to be processed");
+		
 		for(Offer offer : offers) {
-			
+			log.debug(offer.getId() +  " offer beig processed");
 			//is there an active bid?
 			Bid activeBid = bidRepository.findByIdAndStatus(offer.getId(), 1);
 			if(activeBid != null) {
 				try {
+					log.debug("Bid " + activeBid.getId() + "being accepted." );
 					acceptBid(activeBid);
 				} catch(Exception e) {
 					System.out.println("failed to process offer " + offer.getId());
@@ -90,12 +102,17 @@ public class TradeService {
 		bid.setStatus(1);
 		bid.setDateTimeMade(new Date());
 		
+		//put bid amount in suspense 
+		
 		
 		if(currentBid != null) {
 			currentBid.setStatus(2);
 			bidRepository.save(currentBid);
+			//release money held for bid
+			
 		}
 
+		
 		bidRepository.save(bid);
 
 	}
@@ -165,7 +182,10 @@ public class TradeService {
 		Offer offer = offerRepository.findOne(bid.getOfferId());
 
 		BigDecimal tradeTotalPrice = bid.getAmountPerShare().multiply(new BigDecimal(offer.getQuantity()));
-
+		
+		BigDecimal commissionAmount = tradeTotalPrice.multiply(new BigDecimal(4)).divide(new BigDecimal(100));
+		
+		BigDecimal sellerAmount = tradeTotalPrice.subtract(commissionAmount);
 		// Check the bidder account has enough cash
 		if (tradeTotalPrice.doubleValue() > accountService.getAccountBalance(bid.getBidderAccountId()).doubleValue()) {
 
@@ -195,7 +215,7 @@ public class TradeService {
 		holding.setQuantity(0);
 		// set status to closed as well
 
-		// create the transaction to credit the money from buyer's acccount
+		// create the transaction to credit the money from buyer's account
 		Transaction transaction = new Transaction();
 
 		transaction.setAccountId(bid.getBidderAccountId());
@@ -209,10 +229,34 @@ public class TradeService {
 
 		sellTransaction.setAccountId(holding.getAccountId());
 		sellTransaction.setAmount(tradeTotalPrice);
+		//chnage to use sellerAmount
 		sellTransaction.setStatus(2);
 		sellTransaction.setTransactionTypeId(3);
 		sellTransaction.setDateCreated(new Date());
 
+		
+		// create the transaction to debit the seller commission
+		Transaction sellComTransaction = new Transaction();
+
+		sellComTransaction.setAccountId(holding.getAccountId());
+		sellComTransaction.setAmount(commissionAmount.negate());
+		sellComTransaction.setStatus(2);
+		//commission payment type
+		sellComTransaction.setTransactionTypeId(4);
+		sellComTransaction.setDateCreated(new Date());		
+		
+		
+		//Create the transaction to credit SportsEQ account with commission
+		// create the transaction to debit the seller commission
+		Transaction commissionTransaction = new Transaction();
+
+		commissionTransaction.setAccountId(1);
+		commissionTransaction.setAmount(commissionAmount);
+		commissionTransaction.setStatus(2);
+		//commission payment type
+		commissionTransaction.setTransactionTypeId(4);
+		commissionTransaction.setDateCreated(new Date());	
+		
 		// Save offer and transactions
 		offerRepository.save(offer);
 		holdingRepository.save(holding);
@@ -220,9 +264,9 @@ public class TradeService {
 
 		transactionRepository.save(transaction);
 		transactionRepository.save(sellTransaction);
+		transactionRepository.save(sellComTransaction);
+		transactionRepository.save(commissionTransaction);
 
-		
-		
 		
 	}
 	
